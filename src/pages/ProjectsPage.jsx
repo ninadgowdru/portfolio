@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SiGithub } from 'react-icons/si';
-import { Star, ShieldAlert, Cpu, Wrench, ExternalLink } from 'lucide-react';
 import { projects } from '../data/projects';
+import { getProjectCover } from '../data/projectCovers';
 import ProjectDetailModal from '../components/ProjectDetailModal';
 
 export default function ProjectsPage() {
@@ -10,8 +10,8 @@ export default function ProjectsPage() {
 
   const filteredProjects = projects.filter((p) => {
     if (filter === 'all') return true;
-    if (filter === 'security') return p.category === 'security';
     if (filter === 'ai') return p.category === 'ai';
+    if (filter === 'security') return p.category === 'security';
     if (filter === 'tools') return p.category === 'tools';
     return true;
   });
@@ -38,20 +38,20 @@ export default function ProjectsPage() {
           <span>
             <button
               type="button"
-              aria-pressed={filter === 'security'}
-              onClick={() => setFilter('security')}
+              aria-pressed={filter === 'ai'}
+              onClick={() => setFilter('ai')}
             >
-              security &amp; waf
+              ai &amp; llm safety
             </button>
             <i>/</i>
           </span>
           <span>
             <button
               type="button"
-              aria-pressed={filter === 'ai'}
-              onClick={() => setFilter('ai')}
+              aria-pressed={filter === 'security'}
+              onClick={() => setFilter('security')}
             >
-              ai &amp; llm safety
+              security &amp; waf
             </button>
             <i>/</i>
           </span>
@@ -76,122 +76,83 @@ export default function ProjectsPage() {
         </a>
       </div>
 
-      {/* Featured Projects */}
+      {/* Featured Projects Group */}
       {featuredList.length > 0 && (
         <section className="project-group" aria-labelledby="featured-heading">
           <header>
             <h2 id="featured-heading">featured systems</h2>
+            <span aria-hidden="true" />
           </header>
 
-          <div className="project-grid">
+          <div className="project-terminal-grid">
             {featuredList.map((project) => (
-              <article
+              <button
                 key={project.id}
-                className="project-card"
+                type="button"
+                className="project-terminal-card"
                 onClick={() => setSelectedProject(project)}
-                style={{ cursor: 'pointer' }}
+                aria-label={`Open details for ${project.name}`}
               >
-                <div className="project-card__header">
-                  <h3>{project.title}</h3>
-                  <span className="project-card__badge">featured</span>
-                </div>
+                <span className="project-terminal-card__media">
+                  <img src={getProjectCover(project.id)} alt="" loading="lazy" />
+                  <i aria-hidden="true" />
+                </span>
 
-                <p className="project-card__summary">{project.summary}</p>
-
-                <div className="project-card__meta">
-                  <div className="project-card__stack">
-                    {project.technologies.slice(0, 4).map((tech, i) => (
-                      <span key={i}>{tech}</span>
-                    ))}
-                  </div>
-
-                  <div className="project-card__actions" onClick={(e) => e.stopPropagation()}>
-                    {project.githubUrl && (
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`View ${project.title} on GitHub`}
-                      >
-                        <SiGithub size={14} />
-                      </a>
-                    )}
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`View live deployment for ${project.title}`}
-                      >
-                        <ExternalLink size={14} />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </article>
+                <span className="project-terminal-card__copy">
+                  <strong>{project.name}</strong>
+                  <em>featured</em>
+                  <small>{project.description}</small>
+                  <b>{project.tech.join(' · ')}</b>
+                  <span aria-hidden="true">inspect system →</span>
+                </span>
+              </button>
             ))}
           </div>
         </section>
       )}
 
-      {/* Other Projects */}
+      {/* Additional Projects Group */}
       {otherList.length > 0 && (
-        <section className="project-group" aria-labelledby="other-heading" style={{ marginTop: 36 }}>
+        <section className="project-group" aria-labelledby="other-heading" style={{ marginTop: 28 }}>
           <header>
             <h2 id="other-heading">security &amp; automation tooling</h2>
+            <span aria-hidden="true" />
           </header>
 
-          <div className="project-grid">
+          <div className="project-terminal-grid">
             {otherList.map((project) => (
-              <article
+              <button
                 key={project.id}
-                className="project-card"
+                type="button"
+                className="project-terminal-card"
                 onClick={() => setSelectedProject(project)}
-                style={{ cursor: 'pointer' }}
+                aria-label={`Open details for ${project.name}`}
               >
-                <div className="project-card__header">
-                  <h3>{project.title}</h3>
-                  {project.stars && project.stars > 0 && (
-                    <span className="project-card__stars" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--term-amber)' }}>
-                      <Star size={12} fill="currentColor" /> {project.stars}
-                    </span>
-                  )}
-                </div>
+                <span className="project-terminal-card__media">
+                  <img src={getProjectCover(project.id)} alt="" loading="lazy" />
+                  <i aria-hidden="true" />
+                </span>
 
-                <p className="project-card__summary">{project.summary}</p>
-
-                <div className="project-card__meta">
-                  <div className="project-card__stack">
-                    {project.technologies.slice(0, 3).map((tech, i) => (
-                      <span key={i}>{tech}</span>
-                    ))}
-                  </div>
-
-                  <div className="project-card__actions" onClick={(e) => e.stopPropagation()}>
-                    {project.githubUrl && (
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`View ${project.title} on GitHub`}
-                      >
-                        <SiGithub size={14} />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </article>
+                <span className="project-terminal-card__copy">
+                  <strong>{project.name}</strong>
+                  <em>{project.category}</em>
+                  <small>{project.description}</small>
+                  <b>{project.tech.join(' · ')}</b>
+                  <span aria-hidden="true">inspect tool →</span>
+                </span>
+              </button>
             ))}
           </div>
         </section>
       )}
 
-      {/* Detail Modal */}
-      <ProjectDetailModal
-        project={selectedProject}
-        isOpen={!!selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+      {/* Modal Details */}
+      {selectedProject && (
+        <ProjectDetailModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      )}
     </main>
   );
 }

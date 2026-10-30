@@ -15,6 +15,7 @@ import RecruiterSummaryModal from '../components/RecruiterSummaryModal';
 import CodingStatusModal from '../components/CodingStatusModal';
 import GithubActivityGrid from '../components/GithubActivityGrid';
 import ExperienceSection from '../components/ExperienceSection';
+import HomeProjectsSection from '../components/HomeProjectsSection';
 import ContributionsSection from '../components/ContributionsSection';
 import WhyHireMeSection from '../components/WhyHireMeSection';
 import HireTerminalForm from '../components/HireTerminalForm';
@@ -175,6 +176,9 @@ export default function HomePage({ onNavigate, onShowToast }) {
 
       {/* $ cat experience.log */}
       <ExperienceSection onNavigateToExperience={() => onNavigate('experience')} />
+
+      {/* $ cat projects.md */}
+      <HomeProjectsSection onNavigateToProjects={() => onNavigate('projects')} />
 
       {/* $ cat contributions.md */}
       <ContributionsSection

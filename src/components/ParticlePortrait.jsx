@@ -75,64 +75,18 @@ export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
 
     img.onload = () => {
       try {
+        sampleCtx.clearRect(0, 0, 120, 120);
         sampleCtx.drawImage(img, 0, 0, 120, 120);
         const imgData = sampleCtx.getImageData(0, 0, 120, 120);
         const data = imgData.data;
-
-        // Flood-fill background detection
-        let rSum = 0, gSum = 0, bSum = 0, count = 0;
-        for (let y = 0; y < 120; y += 1) {
-          for (let x = 0; x < 120; x += 1) {
-            if (x >= 7 && x < 113 && y >= 7 && y < 113) continue;
-            const idx = (120 * y + x) * 4;
-            rSum += data[idx];
-            gSum += data[idx + 1];
-            bSum += data[idx + 2];
-            count += 1;
-          }
-        }
-        const avgBg = [rSum / (count || 1), gSum / (count || 1), bSum / (count || 1)];
-        const visited = new Uint8Array(14400);
-        const queue = new Int32Array(14400);
-        let head = 0, tail = 0;
-
-        function check(x, y) {
-          if (x < 0 || x >= 120 || y < 0 || y >= 120) return;
-          const idx = 120 * y + x;
-          if (visited[idx]) return;
-          const pIdx = 4 * idx;
-          const r = data[pIdx], g = data[pIdx + 1], b = data[pIdx + 2];
-          if (Math.hypot(r - avgBg[0], g - avgBg[1], b - avgBg[2]) > 65) return;
-          visited[idx] = 1;
-          queue[tail] = idx;
-          tail += 1;
-        }
-
-        for (let i = 0; i < 120; i += 1) {
-          check(i, 0);
-          check(i, 119);
-          check(0, i);
-          check(119, i);
-        }
-
-        while (head < tail) {
-          const curr = queue[head];
-          head += 1;
-          const cx = curr % 120;
-          const cy = Math.floor(curr / 120);
-          check(cx - 1, cy);
-          check(cx + 1, cy);
-          check(cx, cy - 1);
-          check(cx, cy + 1);
-        }
 
         const newParticles = [];
         for (let y = 0; y < 120; y += 1) {
           for (let x = 0; x < 120; x += 1) {
             const idx = 120 * y + x;
-            if (visited[idx]) continue;
             const pIdx = 4 * idx;
-            if (data[pIdx + 3] < 60) continue;
+            // Clean alpha check: only character pixels
+            if (data[pIdx + 3] < 128) continue;
 
             const pr = data[pIdx];
             const pg = data[pIdx + 1];
