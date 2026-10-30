@@ -59,3 +59,4 @@ export const profile = {
     "I also care deeply about the next frontier: AI security. With systems like CortexShield and ZoroWAF, I design detection pipelines that safeguard generative models, RAG systems, and modern APIs against emerging threat vectors."
   ]
 };
+

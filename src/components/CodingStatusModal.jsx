@@ -59,3 +59,4 @@ export default function CodingStatusModal({ isOpen, onClose }) {
     </div>
   );
 }
+

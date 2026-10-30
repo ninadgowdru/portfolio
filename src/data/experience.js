@@ -84,3 +84,4 @@ export const certifications = [
     focus: "Threat intelligence, penetration testing fundamentals, endpoint security, vulnerability assessment"
   }
 ];
+

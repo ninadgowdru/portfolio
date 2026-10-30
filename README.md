@@ -79,3 +79,4 @@ npm run preview
 - **Phone**: +91 8660187114
 - **GitHub**: [github.com/ninadgowdru](https://github.com/ninadgowdru)
 - **LinkedIn**: [linkedin.com/in/ninad-gowda-0446522a6](https://www.linkedin.com/in/ninad-gowda-0446522a6/)
+

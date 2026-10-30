@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { SiGithub } from 'react-icons/si';
-import { Star, ShieldAlert, Cpu, Wrench, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Star, ShieldAlert, Cpu, Wrench, ExternalLink } from 'lucide-react';
 import { projects } from '../data/projects';
 import ProjectDetailModal from '../components/ProjectDetailModal';
 
-export default function ProjectsPage({ onNavigate }) {
+export default function ProjectsPage() {
   const [filter, setFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState(null);
 
@@ -20,21 +20,8 @@ export default function ProjectsPage({ onNavigate }) {
   const otherList = filteredProjects.filter((p) => !p.featured);
 
   return (
-    <main id="main-content" className="terminal-shell projects-route" style={{ padding: '48px 0 92px' }}>
-      <div style={{ marginBottom: 20 }}>
-        <button
-          type="button"
-          onClick={() => onNavigate('home')}
-          className="detail-hero__back"
-          style={{ background: 'none', border: 'none', padding: 0 }}
-        >
-          <ArrowLeft size={14} /> portfolio index
-        </button>
-      </div>
-
-      <h1 style={{ fontSize: 28, margin: '0 0 16px', color: 'var(--term-text-strong)', letterSpacing: '-0.02em' }}>
-        projects
-      </h1>
+    <main id="main-content" className="terminal-shell route-page projects-route">
+      <h1>projects</h1>
 
       <div className="route-toolbar">
         <div className="terminal-tabs" role="group" aria-label="Filter projects">
@@ -54,7 +41,7 @@ export default function ProjectsPage({ onNavigate }) {
               aria-pressed={filter === 'security'}
               onClick={() => setFilter('security')}
             >
-              security & waf
+              security &amp; waf
             </button>
             <i>/</i>
           </span>
@@ -64,7 +51,7 @@ export default function ProjectsPage({ onNavigate }) {
               aria-pressed={filter === 'ai'}
               onClick={() => setFilter('ai')}
             >
-              ai & llm safety
+              ai &amp; llm safety
             </button>
             <i>/</i>
           </span>
@@ -74,7 +61,7 @@ export default function ProjectsPage({ onNavigate }) {
               aria-pressed={filter === 'tools'}
               onClick={() => setFilter('tools')}
             >
-              recon & tools
+              recon &amp; tools
             </button>
           </span>
         </div>
@@ -92,89 +79,52 @@ export default function ProjectsPage({ onNavigate }) {
       {/* Featured Projects */}
       {featuredList.length > 0 && (
         <section className="project-group" aria-labelledby="featured-heading">
-          <header style={{ borderBottom: '1px solid var(--term-line-soft)', paddingBottom: 8, marginBottom: 20 }}>
-            <h2 id="featured-heading" style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--term-green)', margin: 0 }}>
-              featured systems
-            </h2>
+          <header>
+            <h2 id="featured-heading">featured systems</h2>
           </header>
 
-          <div className="project-terminal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 20 }}>
-            {featuredList.map((p) => (
+          <div className="project-grid">
+            {featuredList.map((project) => (
               <article
-                key={p.id}
-                className="project-terminal-card"
-                onClick={() => setSelectedProject(p)}
-                style={{
-                  border: '1px solid var(--term-line)',
-                  background: 'var(--term-surface)',
-                  padding: 20,
-                  cursor: 'pointer',
-                  transition: 'border-color 0.18s, transform 0.18s, background 0.18s',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between'
-                }}
+                key={project.id}
+                className="project-card"
+                onClick={() => setSelectedProject(project)}
+                style={{ cursor: 'pointer' }}
               >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-                    <h3 style={{ margin: 0, fontSize: 16, color: 'var(--term-text-strong)' }}>
-                      {p.name}
-                    </h3>
-                    <span style={{ fontSize: 11, color: 'var(--term-amber)', letterSpacing: '0.04em' }}>
-                      {p.category.toUpperCase()}
-                    </span>
-                  </div>
-
-                  <p style={{ margin: '0 0 12px', fontSize: 12, color: 'var(--term-dim)' }}>
-                    {p.tagline}
-                  </p>
-
-                  <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--term-text)', lineHeight: 1.6 }}>
-                    {p.description}
-                  </p>
+                <div className="project-card__header">
+                  <h3>{project.title}</h3>
+                  <span className="project-card__badge">featured</span>
                 </div>
 
-                <div>
-                  {p.metrics && (
-                    <div style={{ fontSize: 11.5, color: 'var(--term-mint)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span>●</span> {p.metrics}
-                    </div>
-                  )}
+                <p className="project-card__summary">{project.summary}</p>
 
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
-                    {p.tech.slice(0, 4).map((t, idx) => (
-                      <span
-                        key={idx}
-                        style={{
-                          background: 'var(--term-bg)',
-                          border: '1px solid var(--term-line-soft)',
-                          padding: '2px 7px',
-                          fontSize: 11,
-                          color: 'var(--term-muted)'
-                        }}
-                      >
-                        {t}
-                      </span>
+                <div className="project-card__meta">
+                  <div className="project-card__stack">
+                    {project.technologies.slice(0, 4).map((tech, i) => (
+                      <span key={i}>{tech}</span>
                     ))}
-                    {p.tech.length > 4 && (
-                      <span style={{ fontSize: 11, color: 'var(--term-dim)', alignSelf: 'center' }}>
-                        +{p.tech.length - 4} more
-                      </span>
-                    )}
                   </div>
 
-                  <div style={{ borderTop: '1px dashed var(--term-line-soft)', paddingTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11.5, color: 'var(--term-muted)' }}>
-                    <span style={{ color: 'var(--term-green)' }}>inspect details →</span>
-                    {p.githubUrl && (
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open(p.githubUrl, '_blank');
-                        }}
-                        style={{ textDecoration: 'underline', color: 'var(--term-dim)' }}
+                  <div className="project-card__actions" onClick={(e) => e.stopPropagation()}>
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`View ${project.title} on GitHub`}
                       >
-                        github
-                      </span>
+                        <SiGithub size={14} />
+                      </a>
+                    )}
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`View live deployment for ${project.title}`}
+                      >
+                        <ExternalLink size={14} />
+                      </a>
                     )}
                   </div>
                 </div>
@@ -184,50 +134,51 @@ export default function ProjectsPage({ onNavigate }) {
         </section>
       )}
 
-      {/* Additional Repos & Tools */}
+      {/* Other Projects */}
       {otherList.length > 0 && (
-        <section className="project-group" aria-labelledby="other-heading" style={{ marginTop: 44 }}>
-          <header style={{ borderBottom: '1px solid var(--term-line-soft)', paddingBottom: 8, marginBottom: 20 }}>
-            <h2 id="other-heading" style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--term-dim)', margin: 0 }}>
-              offensive tools & repositories
-            </h2>
+        <section className="project-group" aria-labelledby="other-heading" style={{ marginTop: 36 }}>
+          <header>
+            <h2 id="other-heading">security &amp; automation tooling</h2>
           </header>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-            {otherList.map((p) => (
+          <div className="project-grid">
+            {otherList.map((project) => (
               <article
-                key={p.id}
-                onClick={() => setSelectedProject(p)}
-                style={{
-                  border: '1px solid var(--term-line)',
-                  background: 'var(--term-surface)',
-                  padding: 16,
-                  cursor: 'pointer',
-                  transition: 'border-color 0.18s',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between'
-                }}
+                key={project.id}
+                className="project-card"
+                onClick={() => setSelectedProject(project)}
+                style={{ cursor: 'pointer' }}
               >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
-                    <h3 style={{ margin: 0, fontSize: 14.5, color: 'var(--term-text-strong)' }}>
-                      {p.name}
-                    </h3>
-                    {p.stars > 0 && (
-                      <span style={{ fontSize: 11, color: 'var(--term-amber)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                        <Star size={12} fill="currentColor" /> {p.stars}
-                      </span>
-                    )}
-                  </div>
-                  <p style={{ margin: '0 0 12px', fontSize: 12.5, color: 'var(--term-muted)', lineHeight: 1.5 }}>
-                    {p.description}
-                  </p>
+                <div className="project-card__header">
+                  <h3>{project.title}</h3>
+                  {project.stars && project.stars > 0 && (
+                    <span className="project-card__stars" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--term-amber)' }}>
+                      <Star size={12} fill="currentColor" /> {project.stars}
+                    </span>
+                  )}
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--term-line-soft)', paddingTop: 8, fontSize: 11 }}>
-                  <span style={{ color: 'var(--term-dim)' }}>{p.tech.join(' · ')}</span>
-                  <span style={{ color: 'var(--term-green)' }}>open →</span>
+                <p className="project-card__summary">{project.summary}</p>
+
+                <div className="project-card__meta">
+                  <div className="project-card__stack">
+                    {project.technologies.slice(0, 3).map((tech, i) => (
+                      <span key={i}>{tech}</span>
+                    ))}
+                  </div>
+
+                  <div className="project-card__actions" onClick={(e) => e.stopPropagation()}>
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`View ${project.title} on GitHub`}
+                      >
+                        <SiGithub size={14} />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </article>
             ))}
@@ -235,9 +186,10 @@ export default function ProjectsPage({ onNavigate }) {
         </section>
       )}
 
-      {/* Project Detail Modal */}
+      {/* Detail Modal */}
       <ProjectDetailModal
         project={selectedProject}
+        isOpen={!!selectedProject}
         onClose={() => setSelectedProject(null)}
       />
     </main>

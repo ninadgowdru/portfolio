@@ -5,7 +5,6 @@ import {
   SiLinux,
   SiGit,
   SiGithub,
-  SiPytorch,
   SiDocker
 } from 'react-icons/si';
 import { FaLinkedinIn, FaShieldAlt, FaTerminal, FaSearch, FaCheckCircle, FaLock } from 'react-icons/fa';
@@ -15,8 +14,8 @@ import ParticlePortrait from '../components/ParticlePortrait';
 import RecruiterSummaryModal from '../components/RecruiterSummaryModal';
 import CodingStatusModal from '../components/CodingStatusModal';
 import GithubActivityGrid from '../components/GithubActivityGrid';
-import HallOfFameSection from '../components/HallOfFameSection';
 import ExperienceSection from '../components/ExperienceSection';
+import ContributionsSection from '../components/ContributionsSection';
 import WhyHireMeSection from '../components/WhyHireMeSection';
 import HireTerminalForm from '../components/HireTerminalForm';
 import { profile } from '../data/profile';
@@ -42,6 +41,8 @@ export default function HomePage({ onNavigate, onShowToast }) {
         return <FaSearch size={12} aria-hidden={true} />;
       case 'lock':
         return <FaLock size={12} aria-hidden={true} />;
+      case 'docker':
+        return <SiDocker size={12} aria-hidden={true} />;
       default:
         return <FaCheckCircle size={12} aria-hidden={true} />;
     }
@@ -59,14 +60,13 @@ export default function HomePage({ onNavigate, onShowToast }) {
 
   return (
     <main id="main-content" className="terminal-shell terminal-home">
+      {/* Hero Console */}
       <section className="profile-console" aria-labelledby="profile-name">
-        {/* Visual / Canvas Column */}
         <ParticlePortrait
           onOpenSummary={() => setActiveModal('summary')}
           onOpenCoding={() => setActiveModal('coding')}
         />
 
-        {/* Copy Column */}
         <div className="profile-console__copy">
           <span
             className="availability-stamp"
@@ -160,7 +160,7 @@ export default function HomePage({ onNavigate, onShowToast }) {
         </div>
       </section>
 
-      {/* Interactive Modals */}
+      {/* Modals: tl;dr and coding */}
       <RecruiterSummaryModal
         isOpen={activeModal === 'summary'}
         onClose={() => setActiveModal(null)}
@@ -170,19 +170,22 @@ export default function HomePage({ onNavigate, onShowToast }) {
         onClose={() => setActiveModal(null)}
       />
 
-      {/* GitHub Activity Grid */}
+      {/* GitHub Calendar Section */}
       <GithubActivityGrid username="ninadgowdru" />
 
-      {/* Hall of Fame & Achievements */}
-      <HallOfFameSection />
-
-      {/* Experience Section */}
+      {/* $ cat experience.log */}
       <ExperienceSection onNavigateToExperience={() => onNavigate('experience')} />
 
-      {/* Why Hire Me Philosophy */}
+      {/* $ cat contributions.md */}
+      <ContributionsSection
+        onNavigateToProjects={() => onNavigate('projects')}
+        onNavigateToExperience={() => onNavigate('experience')}
+      />
+
+      {/* $ cat why-hire-me.md */}
       <WhyHireMeSection />
 
-      {/* Interactive Terminal Contact */}
+      {/* $ cat hire.me */}
       <HireTerminalForm onShowToast={onShowToast} />
     </main>
   );

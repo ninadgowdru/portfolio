@@ -3,7 +3,6 @@ import React from 'react';
 export default function Navbar({ currentRoute, onNavigate }) {
   const navItems = [
     { id: 'projects', label: 'projects', path: '/projects' },
-    { id: 'experience', label: 'experience', path: '/experience' },
     { id: 'blog', label: 'blog', path: '/blog' },
     { id: 'gears', label: 'gears', path: '/gears' }
   ];

@@ -1,5 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 
+// Pseudo-random deterministic shader-style noise
+function pseudoRandom(e) {
+  const t = 43758.5453 * Math.sin(12.9898 * e);
+  return t - Math.floor(t);
+}
+
 export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
   const canvasRef = useRef(null);
 
@@ -9,113 +15,57 @@ export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationFrameId;
-    let isDestroyed = false;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const sampleCanvas = document.createElement('canvas');
+    sampleCanvas.width = 120;
+    sampleCanvas.height = 120;
+    const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+    if (!sampleCtx) return;
 
-    const width = 480;
-    const height = 480;
-    canvas.width = width;
-    canvas.height = height;
-
-    const pointer = { x: -999, y: -999, active: false };
+    const pointer = { x: 240, y: 240, active: false };
     let particles = [];
     let frameCount = 0;
+    let isDestroyed = false;
+    let animId = 0;
 
-    // Build procedural hacker avatar silhouette if image takes time or as base
-    const initParticlesFromImage = (img) => {
-      const offscreen = document.createElement('canvas');
-      const sampleSize = 100;
-      offscreen.width = sampleSize;
-      offscreen.height = sampleSize;
-      const offCtx = offscreen.getContext('2d');
-      if (!offCtx) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
 
-      offCtx.drawImage(img, 0, 0, sampleSize, sampleSize);
-      let imgData;
-      try {
-        imgData = offCtx.getImageData(0, 0, sampleSize, sampleSize).data;
-      } catch (e) {
-        initProceduralParticles();
-        return;
-      }
+    const handlePointerMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((e.clientX - rect.left) / rect.width) * 480;
+      pointer.y = ((e.clientY - rect.top) / rect.height) * 480;
+      pointer.active = true;
+    };
 
-      const newParticles = [];
-      const scaleX = width / sampleSize;
-      const scaleY = height / sampleSize;
-
-      for (let y = 0; y < sampleSize; y += 2) {
-        for (let x = 0; x < sampleSize; x += 2) {
-          const idx = (y * sampleSize + x) * 4;
-          const r = imgData[idx];
-          const g = imgData[idx + 1];
-          const b = imgData[idx + 2];
-          const a = imgData[idx + 3];
-
-          // Compute luminance
-          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-
-          // Select particles that form character contours and highlights
-          if (a > 120 && lum > 40) {
-            const homeX = x * scaleX + (Math.random() - 0.5) * 2;
-            const homeY = y * scaleY + (Math.random() - 0.5) * 2;
-
-            let color = 'rgba(168, 182, 111, 0.85)'; // term green
-            if (lum > 180) {
-              color = 'rgba(225, 207, 178, 0.95)'; // term cream
-            } else if (lum > 110) {
-              color = 'rgba(212, 161, 95, 0.85)'; // term amber
-            } else if (lum > 70) {
-              color = 'rgba(131, 185, 139, 0.75)'; // term mint
-            } else {
-              color = 'rgba(86, 81, 75, 0.6)'; // term dim
-            }
-
-            newParticles.push({
-              homeX,
-              homeY,
-              x: homeX + (Math.random() - 0.5) * 120,
-              y: homeY + (Math.random() - 0.5) * 120,
-              vx: 0,
-              vy: 0,
-              size: Math.random() > 0.8 ? 2.5 : 1.8,
-              color,
-              delay: Math.floor(Math.random() * 30)
-            });
-          }
-        }
-      }
-
-      if (newParticles.length > 200) {
-        particles = newParticles;
-      } else {
-        initProceduralParticles();
-      }
+    const handlePointerLeave = () => {
+      pointer.active = false;
     };
 
     const initProceduralParticles = () => {
       const newParticles = [];
-      const centerX = width / 2;
-      const centerY = height / 2;
+      const centerX = 240;
+      const centerY = 240;
 
       for (let i = 0; i < 900; i++) {
-        // Generate security shield / hacker node mesh
         const angle = Math.random() * Math.PI * 2;
         const radius = Math.pow(Math.random(), 0.6) * 190;
         const homeX = centerX + Math.cos(angle) * radius;
         const homeY = centerY + Math.sin(angle) * radius;
 
-        let color = 'rgba(168, 182, 111, 0.8)';
-        if (i % 5 === 0) color = 'rgba(225, 207, 178, 0.9)';
-        if (i % 7 === 0) color = 'rgba(212, 161, 95, 0.8)';
+        let color = 'rgb(243, 198, 77)'; // Straw hat yellow
+        if (i % 4 === 0) color = 'rgb(218, 59, 43)'; // Luffy coat red
+        if (i % 6 === 0) color = 'rgb(30, 41, 59)'; // Luffy hair black
+        if (i % 8 === 0) color = 'rgb(245, 215, 178)'; // Skin tone
 
         newParticles.push({
           homeX,
           homeY,
-          x: homeX + (Math.random() - 0.5) * 140,
-          y: homeY + (Math.random() - 0.5) * 140,
+          x: homeX + (Math.random() - 0.5) * 120,
+          y: homeY + (Math.random() - 0.5) * 120,
           vx: 0,
           vy: 0,
-          size: Math.random() * 2 + 1.2,
+          size: 4.35,
           color,
           delay: Math.floor(Math.random() * 25)
         });
@@ -123,110 +73,205 @@ export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
       particles = newParticles;
     };
 
-    // Attempt to load photo
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = '/ninad_avatar.jpg';
     img.onload = () => {
-      if (!isDestroyed) {
-        initParticlesFromImage(img);
-      }
-    };
-    img.onerror = () => {
-      if (!isDestroyed) {
+      try {
+        sampleCtx.drawImage(img, 0, 0, 120, 120);
+        const imgData = sampleCtx.getImageData(0, 0, 120, 120);
+        const data = imgData.data;
+
+        // Flood-fill background detection
+        let rSum = 0, gSum = 0, bSum = 0, count = 0;
+        for (let y = 0; y < 120; y += 1) {
+          for (let x = 0; x < 120; x += 1) {
+            if (x >= 7 && x < 113 && y >= 7 && y < 113) continue;
+            const idx = (120 * y + x) * 4;
+            rSum += data[idx];
+            gSum += data[idx + 1];
+            bSum += data[idx + 2];
+            count += 1;
+          }
+        }
+        const avgBg = [rSum / (count || 1), gSum / (count || 1), bSum / (count || 1)];
+        const visited = new Uint8Array(14400);
+        const queue = new Int32Array(14400);
+        let head = 0, tail = 0;
+
+        function check(x, y) {
+          if (x < 0 || x >= 120 || y < 0 || y >= 120) return;
+          const idx = 120 * y + x;
+          if (visited[idx]) return;
+          const pIdx = 4 * idx;
+          const r = data[pIdx], g = data[pIdx + 1], b = data[pIdx + 2];
+          if (Math.hypot(r - avgBg[0], g - avgBg[1], b - avgBg[2]) > 65) return;
+          visited[idx] = 1;
+          queue[tail] = idx;
+          tail += 1;
+        }
+
+        for (let i = 0; i < 120; i += 1) {
+          check(i, 0);
+          check(i, 119);
+          check(0, i);
+          check(119, i);
+        }
+
+        while (head < tail) {
+          const curr = queue[head];
+          head += 1;
+          const cx = curr % 120;
+          const cy = Math.floor(curr / 120);
+          check(cx - 1, cy);
+          check(cx + 1, cy);
+          check(cx, cy - 1);
+          check(cx, cy + 1);
+        }
+
+        const newParticles = [];
+        for (let y = 0; y < 120; y += 1) {
+          for (let x = 0; x < 120; x += 1) {
+            const idx = 120 * y + x;
+            if (visited[idx]) continue;
+            const pIdx = 4 * idx;
+            if (data[pIdx + 3] < 60) continue;
+
+            const pr = data[pIdx];
+            const pg = data[pIdx + 1];
+            const pb = data[pIdx + 2];
+
+            const u = idx + 1;
+            const homeX = (x + 0.5) * 4;
+            const homeY = (y + 0.5) * 4;
+            const distOffset = prefersReducedMotion ? 90 + 120 * pseudoRandom(u) : 250 + 420 * pseudoRandom(u);
+            const spread = (pseudoRandom(2.37 * u) - 0.5) * (prefersReducedMotion ? 22 : 54);
+            const startX = homeX - 0.8775825618903728 * distOffset + spread;
+            const startY = homeY - -0.479425538604203 * distOffset + 0.35 * spread;
+            const normDist = (homeX + (480 - homeY) * 0.42) / 681.6;
+            const delay = prefersReducedMotion
+              ? Math.floor(6 * pseudoRandom(5.1 * u))
+              : Math.floor(34 * normDist + 11 * pseudoRandom(5.1 * u));
+
+            newParticles.push({
+              homeX,
+              homeY,
+              x: startX,
+              y: startY,
+              vx: 0.8775825618903728 * (prefersReducedMotion ? 4 : 7 + 4 * pseudoRandom(3.11 * u)),
+              vy: -0.479425538604203 * (prefersReducedMotion ? 4 : 7 + 4 * pseudoRandom(4.73 * u)),
+              size: 4.35,
+              color: `rgb(${pr}, ${pg}, ${pb})`,
+              delay
+            });
+          }
+        }
+
+        if (newParticles.length > 100) {
+          particles = newParticles;
+        } else {
+          initProceduralParticles();
+        }
+      } catch (err) {
         initProceduralParticles();
       }
     };
 
-    // Pointer listeners
-    const handlePointerMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
-      pointer.x = ((e.clientX - rect.left) / rect.width) * width;
-      pointer.y = ((e.clientY - rect.top) / rect.height) * height;
-      pointer.active = true;
+    img.onerror = () => {
+      initProceduralParticles();
     };
 
-    const handlePointerLeave = () => {
-      pointer.active = false;
-      pointer.x = -999;
-      pointer.y = -999;
+    img.src = '/ninad_avatar.png';
+
+    // Animation render loop
+    const render = () => {
+      if (isDestroyed) return;
+      frameCount += 1;
+
+      ctx.fillStyle = '#0d0e0f';
+      ctx.fillRect(0, 0, 480, 480);
+
+      // Intro laser beam sweep effect
+      const beamFrames = prefersReducedMotion ? 28 : 48;
+      if (frameCount <= beamFrames) {
+        const progress = Math.min(frameCount / (prefersReducedMotion ? 22 : 38), 1);
+        const sinProg = Math.sin(Math.min(1, frameCount / beamFrames) * Math.PI);
+        const lx = -90 + 720 * progress;
+        const ly = 440 - 360 * progress;
+        const sx = lx - 175;
+        const sy = ly + 88;
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.lineCap = 'round';
+        ctx.shadowBlur = 22;
+        ctx.shadowColor = 'rgba(180, 214, 157, .55)';
+        ctx.strokeStyle = `rgba(166, 198, 143, ${0.28 * sinProg})`;
+        ctx.lineWidth = 18 - 10 * progress;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(lx, ly);
+        ctx.stroke();
+
+        ctx.shadowBlur = 8;
+        ctx.strokeStyle = `rgba(244, 239, 217, ${0.92 * sinProg})`;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(sx - 18, sy + 9);
+        ctx.lineTo(lx, ly);
+        ctx.stroke();
+
+        for (let s = 0; s < 7; s += 1) {
+          const offset = 150 * pseudoRandom(31 * s + 7);
+          const px = lx - offset;
+          const py = ly + 0.5 * offset + (pseudoRandom(17 * s) - 0.5) * 60;
+          ctx.fillStyle = `rgba(216, 204, 172, ${0.42 * sinProg})`;
+          ctx.fillRect(px, py, 10 + 18 * pseudoRandom(9 * s), 1.4);
+        }
+        ctx.restore();
+      }
+
+      // Particle physics & rendering
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        if (frameCount < p.delay) continue;
+
+        const isWarming = frameCount < 90;
+        const springRate = isWarming ? 0.05 : 0.014;
+        p.vx += (p.homeX - p.x) * springRate;
+        p.vy += (p.homeY - p.y) * springRate;
+
+        if (pointer.active) {
+          const dx = p.x - pointer.x;
+          const dy = p.y - pointer.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 0 && dist < 54) {
+            const force = (1 - dist / 54) * 7;
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
+          }
+        }
+
+        p.vx *= isWarming ? 0.78 : 0.86;
+        p.vy *= isWarming ? 0.78 : 0.86;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        const alphaProg = Math.min(1, (frameCount - p.delay + 1) / (prefersReducedMotion ? 6 : 10));
+        const size = p.size * alphaProg;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, size, size);
+      }
+
+      animId = window.requestAnimationFrame(render);
     };
 
     canvas.addEventListener('pointermove', handlePointerMove);
     canvas.addEventListener('pointerenter', handlePointerMove);
     canvas.addEventListener('pointerleave', handlePointerLeave);
 
-    // Animation render loop
-    const render = () => {
-      if (isDestroyed) return;
-      frameCount++;
-
-      ctx.fillStyle = '#0d0e0f';
-      ctx.fillRect(0, 0, width, height);
-
-      // Subtle background grid
-      ctx.strokeStyle = 'rgba(37, 39, 41, 0.35)';
-      ctx.lineWidth = 0.5;
-      for (let x = 0; x < width; x += 32) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < height; y += 32) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
-      }
-
-      // Render & update particles
-      const isWarmup = frameCount < 60;
-      const springRate = isWarmup ? 0.05 : 0.018;
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        if (frameCount < p.delay) continue;
-
-        // Spring force towards home
-        p.vx += (p.homeX - p.x) * springRate;
-        p.vy += (p.homeY - p.y) * springRate;
-
-        // Mouse avoidance physics
-        if (pointer.active) {
-          const dx = p.x - pointer.x;
-          const dy = p.y - pointer.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist > 0 && dist < 65) {
-            const force = (1 - dist / 65) * 8.5;
-            p.vx += (dx / dist) * force;
-            p.vy += (dy / dist) * force;
-          }
-        }
-
-        // Friction damping
-        p.vx *= isWarmup ? 0.76 : 0.85;
-        p.vy *= isWarmup ? 0.76 : 0.85;
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, p.size, p.size);
-      }
-
-      // Subtle scanline effect
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.015)';
-      ctx.fillRect(0, (frameCount * 2) % height, width, 2);
-
-      animationFrameId = window.requestAnimationFrame(render);
-    };
-
     render();
 
     return () => {
       isDestroyed = true;
-      window.cancelAnimationFrame(animationFrameId);
+      window.cancelAnimationFrame(animId);
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerenter', handlePointerMove);
       canvas.removeEventListener('pointerleave', handlePointerLeave);

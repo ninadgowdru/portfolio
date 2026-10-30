@@ -1,5 +1,4 @@
 import React from 'react';
-import { experiences } from '../data/experience';
 
 export default function ExperienceSection({ onNavigateToExperience }) {
   return (
@@ -9,45 +8,38 @@ export default function ExperienceSection({ onNavigateToExperience }) {
       </p>
 
       <div className="experience-log">
-        {experiences.map((exp) => (
-          <article key={exp.id} className={`experience-log__item experience-log__item--${exp.tone}`}>
-            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
-              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--term-text-strong)' }}>
-                {exp.role}
-              </h3>
-              <span style={{ fontSize: 12, color: 'var(--term-muted)' }}>{exp.period}</span>
-            </header>
+        <article className="experience-log__item experience-log__item--green">
+          <h2>freelance appsec researcher &amp; bug bounty hunter</h2>
+          <p>
+            Identified and responsibly disclosed high-impact vulnerabilities across NASA, Microsoft, J.P. Morgan, Ferrari, Nokia, and 20+ global companies. Discovered XSS, IDOR/BOLA, SSRF, and sensitive data exposure using Burp Suite, Nuclei, and custom automation.
+          </p>
+        </article>
 
-            <p style={{ margin: '4px 0 10px', fontSize: 13, color: 'var(--term-dim)' }}>
-              {exp.organization} · {exp.location}
-            </p>
+        <article className="experience-log__item experience-log__item--amber">
+          <h2>cybersecurity intern · prodigy infotech &amp; the red users</h2>
+          <p>
+            Automated vulnerability assessment pipelines using Python, executed structural penetration testing across web targets, and authored comprehensive triage and remediation documentation.
+          </p>
+        </article>
 
-            <p style={{ margin: '0 0 12px', fontSize: 13, color: 'var(--term-text)', lineHeight: 1.6 }}>
-              {exp.summary}
-            </p>
-
-            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--term-muted)', lineHeight: 1.6 }}>
-              {exp.responsibilities.slice(0, 2).map((r, i) => (
-                <li key={i}>{r}</li>
-              ))}
-            </ul>
-          </article>
-        ))}
+        <article className="experience-log__item experience-log__item--mint">
+          <h2>ai security systems builder · cortexshield &amp; zorowaf</h2>
+          <p>
+            Engineered enterprise AI immune systems using BERT classifiers (trained on 50K+ attack samples, achieving 99.9% detection against prompt injection and RAG attacks) and ML-based web application firewalls.
+          </p>
+        </article>
       </div>
 
-      <div style={{ marginTop: 24, textAlign: 'right' }}>
-        <a
-          href="/experience"
-          onClick={(e) => {
-            e.preventDefault();
-            onNavigateToExperience();
-          }}
-          className="command-label"
-          style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13 }}
-        >
-          read the detailed log →
-        </a>
-      </div>
+      <a
+        className="more-terminal-link"
+        href="/experience"
+        onClick={(e) => {
+          e.preventDefault();
+          onNavigateToExperience();
+        }}
+      >
+        read the detailed log →
+      </a>
     </section>
   );
 }

@@ -1,22 +1,10 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
 import { skills } from '../data/skills';
 import { profile } from '../data/profile';
 
-export default function GearsPage({ onNavigate }) {
+export default function GearsPage() {
   return (
-    <main id="main-content" className="terminal-shell gears-route" style={{ padding: '48px 0 92px' }}>
-      <div style={{ marginBottom: 20 }}>
-        <button
-          type="button"
-          onClick={() => onNavigate('home')}
-          className="detail-hero__back"
-          style={{ background: 'none', border: 'none', padding: 0 }}
-        >
-          <ArrowLeft size={14} /> portfolio index
-        </button>
-      </div>
-
+    <main id="main-content" className="terminal-shell route-page gears-route">
       <p className="command-title">
         <span>$</span> cat {skills.stackFile}
       </p>
@@ -48,9 +36,11 @@ export default function GearsPage({ onNavigate }) {
         ))}
       </div>
 
-      <div style={{ marginTop: 40, color: 'var(--term-dim)', fontSize: 12 }}>
-        this page changes as the security attack surface changes. <span style={{ color: 'var(--term-green)' }}>▊</span> end of file
-      </div>
+      <p className="gear-eof">
+        this page changes as the security attack surface changes.
+        <br />
+        ▊ end of file
+      </p>
     </main>
   );
 }

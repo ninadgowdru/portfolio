@@ -58,3 +58,4 @@ export default function RecruiterSummaryModal({ isOpen, onClose }) {
     </div>
   );
 }
+

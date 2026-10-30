@@ -16,9 +16,8 @@ export default function HireTerminalForm({ onShowToast }) {
     setTimeout(() => {
       setStatus('sent');
 
-      // Create mailto fallback link
       const mailtoUrl = `mailto:${profile.email}?subject=${encodeURIComponent(
-        `[AppSec Inquiry] ${subject}`
+        `[AppSec] ${subject}`
       )}&body=${encodeURIComponent(
         `From: ${fromEmail}\n\n${message}`
       )}`;
@@ -39,10 +38,8 @@ export default function HireTerminalForm({ onShowToast }) {
         setMessage('');
         setStatus('idle');
       }, 4000);
-    }, 800);
+    }, 600);
   };
-
-  const isFormValid = fromEmail.trim().length > 0 && subject.trim().length > 0 && message.trim().length > 0;
 
   return (
     <section className="terminal-section" id="hire" aria-labelledby="hire-title">
@@ -53,7 +50,7 @@ export default function HireTerminalForm({ onShowToast }) {
       <form className="hire-terminal" onSubmit={handleSubmit}>
         <div>
           <label>to:</label>
-          <span style={{ color: 'var(--term-green)' }}>{profile.email}</span>
+          <span>{profile.email}</span>
         </div>
 
         <div>
@@ -65,7 +62,7 @@ export default function HireTerminalForm({ onShowToast }) {
             value={fromEmail}
             onChange={(e) => setFromEmail(e.target.value)}
             required
-            disabled={status !== 'idle'}
+            disabled={status === 'sending'}
           />
         </div>
 
@@ -74,35 +71,26 @@ export default function HireTerminalForm({ onShowToast }) {
           <input
             id="hire-subject"
             type="text"
-            placeholder="AppSec role / security audit / bug bounty"
+            placeholder="AppSec Role / Security Audit / Bug Bounty"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             required
-            disabled={status !== 'idle'}
+            disabled={status === 'sending'}
           />
         </div>
 
         <textarea
           aria-label="Message"
-          placeholder="Share project details, team scope, or the role you are hiring for..."
+          placeholder="Share the project, team, and why this could be a good fit..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           required
-          rows={5}
-          disabled={status !== 'idle'}
+          disabled={status === 'sending'}
         />
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
-          <button type="submit" disabled={!isFormValid || status !== 'idle'}>
-            {status === 'sending' ? 'encrypting...' : status === 'sent' ? '✓ transmitted' : 'send'}
-          </button>
-
-          {status === 'sent' && (
-            <span style={{ fontSize: 12, color: 'var(--term-green)' }}>
-              [✓] Packet dispatched! Copied email to clipboard.
-            </span>
-          )}
-        </div>
+        <button type="submit" disabled={status === 'sending'}>
+          {status === 'sending' ? 'transmitting...' : status === 'sent' ? '✓ transmitted' : 'send'}
+        </button>
       </form>
     </section>
   );
