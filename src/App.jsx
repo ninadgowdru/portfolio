@@ -12,14 +12,19 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
-    // Read route from window.location pathname or hash
     const syncRouteFromUrl = () => {
-      const path = window.location.pathname.replace(/^\//, '').toLowerCase();
+      // Check hash first (e.g., #projects, #experience)
       const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+      if (['projects', 'experience', 'blog', 'gears'].includes(hash)) {
+        setRoute(hash);
+        return;
+      }
 
-      const target = hash || path;
-      if (['projects', 'experience', 'blog', 'gears'].includes(target)) {
-        setRoute(target);
+      // Check pathname (e.g. /projects or /portfolio/projects)
+      const segments = window.location.pathname.split('/').filter(Boolean);
+      const last = segments[segments.length - 1]?.toLowerCase();
+      if (['projects', 'experience', 'blog', 'gears'].includes(last)) {
+        setRoute(last);
       } else {
         setRoute('home');
       }
@@ -37,8 +42,19 @@ export default function App() {
 
   const navigateTo = (newRoute) => {
     setRoute(newRoute);
-    const targetUrl = newRoute === 'home' ? '/' : `/${newRoute}`;
-    window.history.pushState(null, '', targetUrl);
+
+    // Compute base path (supports GitHub Pages /portfolio repo path)
+    const isGhPages = window.location.pathname.startsWith('/portfolio');
+    const prefix = isGhPages ? '/portfolio' : '';
+    const targetUrl = newRoute === 'home' ? `${prefix}/` : `${prefix}/${newRoute}`;
+
+    try {
+      window.history.pushState(null, '', targetUrl);
+    } catch (e) {
+      // Fallback to hash navigation if pushState is restricted
+      window.location.hash = newRoute === 'home' ? '' : `#${newRoute}`;
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -79,4 +95,3 @@ export default function App() {
     </div>
   );
 }
-

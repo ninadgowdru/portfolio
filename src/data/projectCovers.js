@@ -9,3 +9,4 @@ export function getProjectCover(id) {
 
   return covers[id] || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect width="600" height="400" fill="%230d0e0f"/><g opacity="0.3"><rect x="140" y="110" width="320" height="180" fill="none" stroke="%23252729" stroke-width="1.5"/><text x="300" y="200" fill="%23a8b66f" font-family="monospace" font-size="14" text-anchor="middle">SECURITY TOOLING // RECON</text></g></svg>`;
 }
+
