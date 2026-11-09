@@ -42,7 +42,7 @@ const contributionsData = {
       target: 'IBM',
       title: 'Enterprise infrastructure security vulnerability acknowledgment',
       badge: 'hall of fame',
-      url: 'https://www.ibm.com'
+      url: 'https://www.ibm.com/'
     },
     {
       id: 'philips',

@@ -3,7 +3,7 @@ export const profile = {
   displayName: "Ninad S P",
   title: "Application Security Engineer · Bug Bounty Researcher",
   location: "Bengaluru, Karnataka, India",
-  email: "ninadgowda777@email.com",
+  email: "ninadgowda777@gmail.com",
   phone: "+91 8660187114",
   availability: "OPEN TO WORK",
   availabilityTitle: "Available for full-time and high-impact security roles",
