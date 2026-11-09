@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Ninad S P — Application Security Engineer</title>
+    <script>
+      var path = location.pathname;
+      var repo = path.split('/')[1];
+      if (repo === 'portfolio') {
+        var sub = path.split('/').slice(2).join('/');
+        location.replace('/portfolio/#' + sub);
+      } else {
+        location.replace('/#' + path.replace(/^\//, ''));
+      }
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
