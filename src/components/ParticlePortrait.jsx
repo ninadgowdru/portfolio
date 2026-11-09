@@ -84,6 +84,9 @@ export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
     };
 
     img.src = luffyAvatarSrc;
+    if (img.complete && img.naturalWidth > 0) {
+      img.onload();
+    }
 
     // Animation render loop
     const render = () => {
