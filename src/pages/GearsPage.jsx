@@ -37,7 +37,7 @@ export default function GearsPage() {
       </div>
 
       <p className="gear-eof">
-        this page changes as the security attack surface changes.
+        this page changes as the security attack surface evolves.
         <br />
         ▊ end of file
       </p>

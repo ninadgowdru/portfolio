@@ -122,7 +122,7 @@ export const projects = [
     featured: false,
     tagline: "Concurrent Network Recon Utility",
     description: "Multi-threaded high-speed TCP/UDP port scanner with banner grabbing and basic service identification for rapid surface reconnaissance.",
-    fullDescription: "A lightweight, robust port scanning utility engineered in Python. Built with concurrent threading pools to scan thousands of ports across target ranges without triggering aggressive packet drops.",
+    fullDescription: "A lightweight, robust port scanning utility engineered in Python, built with concurrent threading pools to scan thousands of ports across target ranges without triggering aggressive packet drops.",
     architecture: [
       "Non-blocking Socket Connection Handshake.",
       "Thread Pool Worker Queue with configurable concurrency and timeouts.",

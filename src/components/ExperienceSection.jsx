@@ -11,7 +11,7 @@ export default function ExperienceSection({ onNavigateToExperience }) {
         <article className="experience-log__item experience-log__item--green">
           <h2>freelance appsec researcher &amp; bug bounty hunter</h2>
           <p>
-            Identified and responsibly disclosed high-impact vulnerabilities across NASA, Microsoft, J.P. Morgan, Ferrari, Nokia, and 20+ global companies. Discovered XSS, IDOR/BOLA, SSRF, and sensitive data exposure using Burp Suite, Nuclei, and custom automation.
+            Identified and responsibly disclosed high-impact vulnerabilities affecting NASA, Microsoft, J.P. Morgan, Ferrari, Nokia, and 20+ global organizations. Discovered XSS, IDOR/BOLA, SSRF, and sensitive data exposure using Burp Suite, Nuclei, and custom automation.
           </p>
         </article>
 

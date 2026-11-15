@@ -7,7 +7,7 @@ export const experiences = [
     period: "2024 — Present",
     tag: "active",
     tone: "green",
-    summary: "Identified and responsibly disclosed vulnerabilities to Microsoft, NASA, JP Morgan, Ferrari, Nokia, IBM, and more.",
+    summary: "Identified and responsibly disclosed vulnerabilities to Microsoft, NASA, J.P. Morgan, Ferrari, Nokia, IBM, and more.",
     description: "Conducting in-depth offensive security research across complex enterprise attack surfaces, API endpoints, and cloud deployments.",
     responsibilities: [
       "Discovered critical and high-severity XSS, IDOR/BOLA, SSRF, SQLi, and sensitive data exposure issues across web and API architectures.",
@@ -55,7 +55,7 @@ export const experiences = [
 
 export const education = [
   {
-    degree: "B.E. Computer Science & Engineering (IoT, Cybersecurity incl. Blockchain)",
+    degree: "B.E. Computer Science & Engineering (IoT, Cybersecurity & Blockchain)",
     institution: "Dayananda Sagar College of Engineering",
     location: "Bengaluru, Karnataka",
     period: "2026 — 2029",

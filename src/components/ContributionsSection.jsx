@@ -210,7 +210,7 @@ export default function ContributionsSection({ onNavigateToProjects, onNavigateT
           }}
         >
           {activeTab === 'open-source'
-            ? '⌄ view all 23 repositories & projects'
+            ? '⌄ view all repositories & security projects'
             : '⌄ read detailed experience log & letters of recognition'}
         </button>
       </div>

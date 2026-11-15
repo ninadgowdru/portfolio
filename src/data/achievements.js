@@ -3,7 +3,7 @@ export const achievements = [
     id: "nasa",
     organization: "NASA",
     type: "critical",
-    typeLabel: "Critical Bug / Letter of Rec",
+    typeLabel: "Critical Bug / Letter of Recognition",
     category: "hall-of-fame",
     title: "NASA Security Hall of Fame & Letter of Recognition",
     description: "Identified and responsibly disclosed a critical vulnerability within NASA's cyber infrastructure. Received official Letter of Recognition and induction into the NASA Hall of Fame.",
@@ -116,7 +116,7 @@ export const achievements = [
     typeLabel: "Letter of Appreciation",
     category: "letters",
     title: "Ideagen Letter of Appreciation",
-    description: "Formal acknowledgement from Ideagen for responsibly triaging and demonstrating an exploit vector within governance, risk, and compliance software.",
+    description: "Formal acknowledgment from Ideagen for responsibly triaging and demonstrating an exploit vector within governance, risk, and compliance software.",
     impact: "Secured enterprise compliance workflows.",
     scope: "Ideagen GRC Systems"
   },

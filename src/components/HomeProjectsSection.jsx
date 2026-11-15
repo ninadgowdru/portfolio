@@ -21,7 +21,7 @@ export default function HomeProjectsSection({ onNavigateToProjects }) {
           onClick={onNavigateToProjects}
           style={{ padding: 0 }}
         >
-          view all 23 projects →
+          view all {projects.length} projects →
         </button>
       </div>
 
