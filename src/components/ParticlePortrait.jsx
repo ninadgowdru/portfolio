@@ -37,6 +37,26 @@ export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
       pointer.y = -999;
     };
 
+    const handlePointerDown = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const cx = ((e.clientX - rect.left) / rect.width) * 480;
+      const cy = ((e.clientY - rect.top) / rect.height) * 480;
+
+      // Burst impulse to nearby particles on click / tap
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const dx = p.x - cx;
+        const dy = p.y - cy;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 150) {
+          const power = (1 - dist / 150) * 12;
+          const angle = Math.atan2(dy, dx);
+          p.vx += Math.cos(angle) * power;
+          p.vy += Math.sin(angle) * power;
+        }
+      }
+    };
+
     img.onload = () => {
       try {
         sampleCtx.clearRect(0, 0, 120, 120);
@@ -132,6 +152,7 @@ export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
     canvas.addEventListener('pointermove', handlePointerMove);
     canvas.addEventListener('pointerenter', handlePointerMove);
     canvas.addEventListener('pointerleave', handlePointerLeave);
+    canvas.addEventListener('pointerdown', handlePointerDown);
 
     render();
 
@@ -141,6 +162,7 @@ export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerenter', handlePointerMove);
       canvas.removeEventListener('pointerleave', handlePointerLeave);
+      canvas.removeEventListener('pointerdown', handlePointerDown);
     };
   }, []);
 
@@ -153,7 +175,9 @@ export default function ParticlePortrait({ onOpenSummary, onOpenCoding }) {
           width="480"
           height="480"
           aria-label="Interactive particle portrait of Ninad S P"
+          title="Interactive portrait · hover to disperse, click for shockwave"
           role="img"
+          style={{ cursor: 'crosshair' }}
         />
       </div>
       <div className="profile-console__controls">

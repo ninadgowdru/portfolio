@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
-import { ExternalLink, X, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ExternalLink, ShieldCheck, Check, Copy } from 'lucide-react';
 import { SiGithub } from 'react-icons/si';
 
 export default function ProjectDetailModal({ project, onClose }) {
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
     if (!project) return;
     const handleKeyDown = (e) => {
@@ -17,6 +19,18 @@ export default function ProjectDetailModal({ project, onClose }) {
   }, [project, onClose]);
 
   if (!project) return null;
+
+  const cloneCommand = project.githubUrl ? `git clone ${project.githubUrl}.git` : '';
+
+  const handleCopyClone = (e) => {
+    e.stopPropagation();
+    if (!cloneCommand) return;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(cloneCommand);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2400);
+    }
+  };
 
   return (
     <div
@@ -90,6 +104,48 @@ export default function ProjectDetailModal({ project, onClose }) {
             </span>
           ))}
         </div>
+
+        {cloneCommand && (
+          <div
+            style={{
+              background: 'var(--term-bg)',
+              border: '1px solid var(--term-line)',
+              padding: '7px 12px',
+              marginBottom: 16,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontFamily: 'var(--term-mono)',
+              fontSize: 11.5,
+              color: 'var(--term-muted)'
+            }}
+          >
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>
+              <span style={{ color: 'var(--term-green)', marginRight: 6 }}>$</span>
+              {cloneCommand}
+            </span>
+            <button
+              type="button"
+              onClick={handleCopyClone}
+              aria-label="Copy git clone command"
+              style={{
+                background: 'none',
+                border: '1px solid var(--term-line)',
+                color: copied ? 'var(--term-green)' : 'var(--term-muted)',
+                padding: '2px 8px',
+                fontSize: 10,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                flexShrink: 0
+              }}
+            >
+              {copied ? <Check size={11} /> : <Copy size={11} />}
+              <span>{copied ? 'copied' : 'copy'}</span>
+            </button>
+          </div>
+        )}
 
         <div style={{ display: 'flex', gap: 12 }}>
           {project.githubUrl && (

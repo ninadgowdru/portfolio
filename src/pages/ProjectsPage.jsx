@@ -6,18 +6,37 @@ import ProjectDetailModal from '../components/ProjectDetailModal';
 
 export default function ProjectsPage() {
   const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState(null);
 
+  const q = searchQuery.trim().toLowerCase();
+
   const filteredProjects = projects.filter((p) => {
-    if (filter === 'all') return true;
-    if (filter === 'ai') return p.category === 'ai';
-    if (filter === 'security') return p.category === 'security';
-    if (filter === 'tools') return p.category === 'tools';
-    return true;
+    const matchesCategory =
+      filter === 'all' ||
+      (filter === 'ai' && p.category === 'ai') ||
+      (filter === 'security' && p.category === 'security') ||
+      (filter === 'tools' && p.category === 'tools');
+
+    if (!matchesCategory) return false;
+    if (!q) return true;
+
+    return (
+      p.name.toLowerCase().includes(q) ||
+      p.tagline.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.tech.some((t) => t.toLowerCase().includes(q)) ||
+      (p.metrics && p.metrics.toLowerCase().includes(q))
+    );
   });
 
   const featuredList = filteredProjects.filter((p) => p.featured);
   const otherList = filteredProjects.filter((p) => !p.featured);
+
+  const countAll = projects.length;
+  const countAi = projects.filter((p) => p.category === 'ai').length;
+  const countSec = projects.filter((p) => p.category === 'security').length;
+  const countTools = projects.filter((p) => p.category === 'tools').length;
 
   return (
     <main id="main-content" className="terminal-shell route-page projects-route">
@@ -31,7 +50,7 @@ export default function ProjectsPage() {
               aria-pressed={filter === 'all'}
               onClick={() => setFilter('all')}
             >
-              all
+              all {countAll}
             </button>
             <i>/</i>
           </span>
@@ -41,7 +60,7 @@ export default function ProjectsPage() {
               aria-pressed={filter === 'ai'}
               onClick={() => setFilter('ai')}
             >
-              ai &amp; llm safety
+              ai &amp; llm safety {countAi}
             </button>
             <i>/</i>
           </span>
@@ -51,7 +70,7 @@ export default function ProjectsPage() {
               aria-pressed={filter === 'security'}
               onClick={() => setFilter('security')}
             >
-              security &amp; waf
+              security &amp; waf {countSec}
             </button>
             <i>/</i>
           </span>
@@ -61,7 +80,7 @@ export default function ProjectsPage() {
               aria-pressed={filter === 'tools'}
               onClick={() => setFilter('tools')}
             >
-              recon &amp; tools
+              recon &amp; tools {countTools}
             </button>
           </span>
         </div>
@@ -75,6 +94,65 @@ export default function ProjectsPage() {
           <SiGithub /> all repos
         </a>
       </div>
+
+      {/* Terminal grep search bar */}
+      <div
+        className="terminal-grep-bar"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          background: 'var(--term-surface)',
+          border: '1px solid var(--term-line)',
+          padding: '6px 12px',
+          marginBottom: 20
+        }}
+      >
+        <span style={{ color: 'var(--term-green)', fontSize: 11, fontFamily: 'var(--term-mono)' }}>$ grep -i</span>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="filter by keyword, tech, or vulnerability (e.g. BERT, XSS, WAF, FastAPI)..."
+          style={{
+            background: 'none',
+            border: 'none',
+            outline: 'none',
+            color: 'var(--term-text-strong)',
+            width: '100%',
+            fontSize: 11.5,
+            fontFamily: 'var(--term-mono)'
+          }}
+          aria-label="Filter projects by search query"
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--term-muted)',
+              cursor: 'pointer',
+              fontSize: 11,
+              fontFamily: 'var(--term-mono)'
+            }}
+          >
+            clear [esc]
+          </button>
+        )}
+      </div>
+
+      {filteredProjects.length === 0 && (
+        <div className="empty-terminal-state" style={{ padding: '36px 14px', textAlign: 'center' }}>
+          <p style={{ color: 'var(--term-amber)', margin: '0 0 6px', fontSize: 13 }}>
+            $ grep: no matching systems found for "{searchQuery}"
+          </p>
+          <p style={{ color: 'var(--term-muted)', fontSize: 11, margin: 0 }}>
+            Try searching for "BERT", "XSS", "WAF", "Python", or switch back to the "all" filter tab.
+          </p>
+        </div>
+      )}
 
       {/* Featured Projects Group */}
       {featuredList.length > 0 && (

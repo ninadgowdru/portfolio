@@ -6,10 +6,13 @@ import ProjectsPage from './pages/ProjectsPage';
 import ExperiencePage from './pages/ExperiencePage';
 import BlogPage from './pages/BlogPage';
 import GearsPage from './pages/GearsPage';
+import CommandPaletteModal from './components/CommandPaletteModal';
+import { terminalAudio } from './utils/audio';
 
 export default function App() {
   const [route, setRoute] = useState('home');
   const [toastMessage, setToastMessage] = useState(null);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
   useEffect(() => {
     const syncRouteFromUrl = () => {
@@ -41,6 +44,7 @@ export default function App() {
   }, []);
 
   const navigateTo = (newRoute) => {
+    terminalAudio.playClick();
     setRoute(newRoute);
 
     // Compute base path (supports GitHub Pages /portfolio repo path)
@@ -58,6 +62,53 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Global Terminal Keyboard Shortcuts
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      // Check if user is typing in an input, textarea, or contentEditable
+      const target = e.target;
+      const isInput =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable;
+
+      // Cmd+K or Ctrl+K or ? toggles command palette
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsPaletteOpen((prev) => !prev);
+        terminalAudio.playClick();
+        return;
+      }
+
+      if (isInput) return;
+
+      if (e.key === '?') {
+        e.preventDefault();
+        setIsPaletteOpen(true);
+        terminalAudio.playClick();
+        return;
+      }
+
+      // Single-key routing shortcuts
+      if (e.key === '1' || e.key === 'h') {
+        navigateTo('home');
+      } else if (e.key === '2' || e.key === 'p') {
+        navigateTo('projects');
+      } else if (e.key === '3' || e.key === 'e') {
+        navigateTo('experience');
+      } else if (e.key === '4' || e.key === 'b') {
+        navigateTo('blog');
+      } else if (e.key === '5' || e.key === 'g') {
+        navigateTo('gears');
+      } else if (e.key === 't') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => {
@@ -73,7 +124,11 @@ export default function App() {
       </a>
 
       {/* Persistent Navigation */}
-      <Navbar currentRoute={route} onNavigate={navigateTo} />
+      <Navbar
+        currentRoute={route}
+        onNavigate={navigateTo}
+        onOpenCommandPalette={() => setIsPaletteOpen(true)}
+      />
 
       {/* Active Page View */}
       {route === 'home' && <HomePage onNavigate={navigateTo} onShowToast={showToast} />}
@@ -83,7 +138,18 @@ export default function App() {
       {route === 'gears' && <GearsPage onNavigate={navigateTo} />}
 
       {/* Persistent Footer */}
-      <Footer />
+      <Footer
+        onOpenCommandPalette={() => setIsPaletteOpen(true)}
+        onShowToast={showToast}
+      />
+
+      {/* Terminal Command Palette Modal */}
+      <CommandPaletteModal
+        isOpen={isPaletteOpen}
+        onClose={() => setIsPaletteOpen(false)}
+        onNavigate={navigateTo}
+        onShowToast={showToast}
+      />
 
       {/* Toast Notification */}
       {toastMessage && (

@@ -137,6 +137,14 @@ export default function HomePage({ onNavigate, onShowToast }) {
             <a
               href={`mailto:${profile.email}`}
               aria-label="Email Ninad"
+              onClick={() => {
+                if (navigator.clipboard) {
+                  navigator.clipboard.writeText(profile.email);
+                }
+                if (onShowToast) {
+                  onShowToast(`Copied ${profile.email} to clipboard!`);
+                }
+              }}
             >
               <Mail size={16} />
             </a>
